@@ -211,6 +211,8 @@ def generate_response_from_db(question, similar_messages):
             max_tokens=1500,
             temperature=0.9
         )
+        print("="*50)
+        print("RESPONSE: ", response)
         return response.choices[0].text.strip()
     except Exception as e:
         raise RuntimeError(f"답변 생성 중 오류 발생: {e}")
