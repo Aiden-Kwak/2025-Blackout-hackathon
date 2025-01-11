@@ -2,6 +2,7 @@ import axios from "axios";
 import { getCookie } from "@/utils/useCookie";
 import URLManagement from "./URLManagement";
 
+
 const apiClient = axios.create({
   baseURL: URLManagement(),
   withCredentials: true,
