@@ -16,8 +16,7 @@ class GoogleRawLoginFlowService:
     def __init__(self):
         self.client_id = settings.GOOGLE_OAUTH2_CLIENT_ID
         self.client_secret = settings.GOOGLE_OAUTH2_CLIENT_SECRET
-        self.redirect_uri = ("http://localhost:8000/api/accountapp/auth/callback/" if settings.DEBUG
-                             else "http://aiden-kwak.com/api/accountapp/auth/callback/")
+        self.redirect_uri = "https://aiden-kwak.com/api/accountapp/auth/callback/"
         
     def _generate_state_token(self, length=30):
         rand = SystemRandom()
