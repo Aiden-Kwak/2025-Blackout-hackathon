@@ -4,9 +4,11 @@ import { useState } from "react";
 import AuthStatus from "@/utils/authStatus";
 import Image from "next/image";
 import styles from "@/app/page.module.css";
+import { URLManagement } from "@/utils/URLManagement";
 
 function LoginButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const url = URLManagement();
 
   return (
     <>
@@ -17,7 +19,7 @@ function LoginButton() {
         href={
           isLoggedIn
             ? "/llm" // 로그인 상태일 때
-            : "http://localhost:8000/api/accountapp/auth/login/?next=http://localhost:3000/llm" // 비로그인 상태일 때
+            : `${url}/api/accountapp/auth/login/?next=${url}/llm` // 비로그인 상태일 때
         }
         target={isLoggedIn ? "_self" : "_blank"}
         rel="noopener noreferrer"
