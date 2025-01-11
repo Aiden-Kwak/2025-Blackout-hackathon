@@ -201,11 +201,14 @@ def generate_response_from_db(question, similar_messages):
     위 메시지 기반으로 질문에 대한 답변을 작성하세요.
     """
     try:
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
             max_tokens=1500,
-            temperature=0.7
+            temperature=0.9
         )
         return response.choices[0].text.strip()
     except Exception as e:
