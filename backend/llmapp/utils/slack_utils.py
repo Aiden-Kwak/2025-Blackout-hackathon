@@ -191,27 +191,37 @@ def search_similar_messages_in_db(query, top_k=5):
     return results
 
 def generate_response_from_db(question, similar_messages):
+    # HTML 출력에 적합한 프롬프트 구성
     context = "\n".join(
         [f"Message: {msg['text']}" for msg in similar_messages]
     )
     prompt = f"""
-    질문: {question}
-    아래는 관련된 메시지입니다:
+    당신은 전문적인 글 작성 어시스턴트입니다. 다음의 질문과 관련된 메시지를 바탕으로 명확하고 간결하며 블로그에 적합한 답변을 작성하세요. 답변은 HTML 형식으로 출력됩니다.
+    1. 질문에 대한 답변은 <h1>, <p>, <ul>과 같은 HTML 태그를 사용해 계층적으로 구성합니다.
+    2. 필요 시, 추가적인 세부 정보를 <p> 태그로 작성하세요.
+    3. 각 근거는 <ul> 리스트로 정리하며, 링크가 포함된 경우 "참고 링크" 섹션을 별도로 추가합니다.
+    4. 블로그의 독자가 쉽게 이해할 수 있도록 가독성을 우선시하세요.
+
+    ### 질문:
+    {question}
+
+    ### 관련 메시지:
     {context}
-    위 메시지 기반으로 질문에 대한 답변을 작성하세요.
+
+    아래 메시지를 바탕으로 답변을 작성하세요.
     """
     client = OpenAI(api_key=openai_api_key) 
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "You are a professional blog assistant."},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=1500,
             temperature=0.9
         )
-        print("="*50)
+        print("=" * 50)
         print("RESPONSE: ", response)
         return response.choices[0].message.content.strip()
     except Exception as e:
