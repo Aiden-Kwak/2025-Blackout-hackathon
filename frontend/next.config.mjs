@@ -10,6 +10,8 @@ const getBaseURL = () => {
 
 const url = getBaseURL();
 
+console.log(url);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 
