@@ -133,6 +133,7 @@ def save_slack_messages(channel_id):
                 timestamp=timestamp,
                 defaults={"thread_ts": thread_ts}  # 스레드 ID 저장
             )
+            print("YOU HAVE TO GET SOME CREATED: ", created)
             if not created:
                 print(f"Message already exists: {msg}")
 
