@@ -20,10 +20,12 @@ class GoogleRawLoginFlowService:
 
         if settings.DEBUG:
             self.redirect_uri = "http://localhost:8000/api/accountapp/auth/callback/"
+            print(True)
         else:
             self.redirect_uri = "http://aiden-kwak.com/api/accountapp/auth/callback/"
+            print(False)
 
-        print(f"DEBUG 최종 값: {settings.DEBUG}")
+        print(f"DEBUG 최종 값: {settings.DEBUG}, URI: {self.redirect_uri}")
         
     def _generate_state_token(self, length=30):
         rand = SystemRandom()
