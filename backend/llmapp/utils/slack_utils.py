@@ -128,8 +128,9 @@ def save_slack_messages(channel_id):
             if not created:
                 print(f"Message already exists: {msg}")
 
-            # 스레드 메시지 저장
-            if thread_ts and thread_ts != timestamp:  # 스레드가 존재하고, 현재 메시지가 스레드의 첫 메시지가 아닌 경우
+            # 스레드 메시지 저장 and thread_ts != timestamp
+            if thread_ts:  # 스레드가 존재하고, 현재 메시지가 스레드의 첫 메시지가 아닌 경우
+                print("스레드 처리 진입")
                 save_thread_messages(channel_id, thread_ts, headers)
 
         except Exception as e:
