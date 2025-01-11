@@ -1,14 +1,19 @@
+import URLManagement from '@/utils/URLManagement';
+
+const url = URLManagement();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+
     async rewrites() {
       return [
         {
           source: "/api/:path*/",
-          destination: "http://localhost:8000/api/:path*/",
+          destination: `${url}/api/:path*/`,
         },
         {
           source: "/media/:path*/",
-          destination: "http://localhost:8000/media/:path*/",
+          destination: `${url}/media/:path*/`,
         },
       ];
     },

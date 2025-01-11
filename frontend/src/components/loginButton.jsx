@@ -10,6 +10,8 @@ function LoginButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const url = URLManagement();
 
+  console.log(url);
+
   return (
     <>
       {/* AuthStatus가 상태를 업데이트 */}
