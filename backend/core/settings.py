@@ -54,7 +54,7 @@ INSTALLED_APPS = [
 
     #### myapps ####
     'myaccountapp',
-    #'llmapp'
+    'llmapp'
 ]
 
 MIDDLEWARE = [
