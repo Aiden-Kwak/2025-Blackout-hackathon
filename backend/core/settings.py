@@ -160,9 +160,11 @@ GOOGLE_OAUTH2_PROJECT_ID= os.getenv("DJANGO_GOOGLE_OAUTH2_PROJECT_ID")
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://aiden-kwak.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "http://aiden-kwak.com",
 ]
 
 SESSION_COOKIE_SAMESITE = "Lax"
