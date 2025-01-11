@@ -28,31 +28,52 @@ def save_slack_messages(channel_id):
     url = "https://slack.com/api/conversations.history"
     headers = {"Authorization": f"Bearer {SLACK_TOKEN}"}
     params = {"channel": channel_id, "limit": 100}
-    print("=======SAVE_MSG_FUNC======") # 굿
-    print("=============> params:" , params)
+    print("=======SAVE_MSG_FUNC======")
+    print("=============> params:", params)
+    
     response = requests.get(url, headers=headers, params=params)
-    print("YOU HAVE TO GET SOME RESPONSE: ", response) # 200 
+    print("YOU HAVE TO GET SOME RESPONSE: ", response)
     if response.status_code != 200:
         print("FUCKED CASE: 1")
         raise RuntimeError(f"Failed to fetch messages: {response.text}")
 
     data = response.json()
-    print("YOU HAVE TO GET SOME DATA: ", data) #{'ok': False, 'error': 'channel_not_found'}
+    print("YOU HAVE TO GET SOME DATA: ", data)
     if not data.get("ok"):
-        print("FUCKED CASE: 2") # 여기 들어옴
+        print("FUCKED CASE: 2")
         raise RuntimeError(f"Slack API error: {data.get('error')}")
-    print("\n")
-    print("="*50)
+
     messages = data.get("messages", [])
     print("YOU HAVE TO GET SOME MESSAGES: ", messages)
+
     for msg in messages:
         print("YOU HAVE TO GET SOME MSG LIST: ", msg)
-        SlackMessage.objects.get_or_create(
-            channel_id=channel_id,
-            user_id=msg.get("user", "Unknown"),
-            text=msg.get("text", ""),
-            timestamp=msg.get("ts")
-        )
+
+        # 데이터 검증
+        user_id = msg.get("user", "Unknown")
+        text = msg.get("text", "").strip()  # 빈 문자열 처리
+        timestamp = msg.get("ts")
+
+        if not timestamp:  # 필수 필드 확인
+            print(f"Skipping message due to missing timestamp: {msg}")
+            continue
+
+        if not text:  # 텍스트가 비어 있으면 스킵
+            print(f"Skipping message due to empty text: {msg}")
+            continue
+
+        try:
+            # 중복 방지 및 저장
+            _, created = SlackMessage.objects.get_or_create(
+                channel_id=channel_id,
+                user_id=user_id,
+                text=text,
+                timestamp=timestamp
+            )
+            if not created:
+                print(f"Message already exists: {msg}")
+        except Exception as e:
+            print(f"Failed to save message: {msg}. Error: {e}")
 
 
 def generate_embedding(text):
