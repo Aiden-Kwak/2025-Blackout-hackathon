@@ -78,7 +78,7 @@ def save_slack_messages(channel_id):
 def generate_embedding(text):
     print("I AM HERE: generate_embedding entered")
     try:
-        print("I AM HERE: generate_embedding try")
+        print("I AM HERE: generate_embedding try") # 여기까지 ㅇㅋ
         if not openai_api_key:
             print("no openai_api_key")
             raise ValueError("OpenAI API 키가 설정되지 않았습니다. 환경 변수 OPENAI_API_KEY를 확인하세요.")
@@ -87,11 +87,17 @@ def generate_embedding(text):
             print("no text")
             raise ValueError(f"Input text must be a string. Got: {type(text)}")
 
-        response = openai.Embedding.create(
-            input=text,
-            model="text-embedding-3-small",
-            api_key=openai_api_key
-        )
+        try:
+            response = openai.Embedding.create(
+                input=text,
+                model="text-embedding-3-small",
+                api_key=openai_api_key
+            )
+            print("OpenAI API raw response: ", response)
+        except Exception as e:
+            print(f"OpenAI API call failed: {e}")
+            raise
+
         print("I AM HERE: generate_embedding response")
         embedding = response["data"][0]["embedding"]
         return np.array(embedding, dtype=np.float32)
