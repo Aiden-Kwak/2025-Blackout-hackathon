@@ -45,10 +45,10 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             print("="*50)
             print(response) # 됐어
             print("WE FUCKED\n"*10)
-            print(request.user)
+            print(request.user) # AnonymousUser
             print("="*50)
-            category, created = Categories.objects.get_or_create(user=request.user, category_name="미정")
-            post, created2 = PostHistory.objects.get_or_create(user=request.user,title=text,
+            category, created = Categories.objects.get_or_create(user=1, category_name="미정")
+            post, created2 = PostHistory.objects.get_or_create(user=1,title=text,
                                                                content=response,category=category)
             print("YOU HAVE TO SEE ME: ", post)
             print(created)
@@ -65,7 +65,7 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
 
 class FetchPostsAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        posts = PostHistory.objects.filter(user=request.user)
+        posts = PostHistory.objects.filter(user=1)
         result = PostSerializer(posts, many=True)  # many=True 추가
         return Response(result.data)
 
@@ -76,7 +76,7 @@ class PostSearchAPIView(APIView):
     def get(self, request, post_id, *args, **kwargs):
         try:
             # post_id로 필터링
-            post = PostHistory.objects.get(id=post_id, user=request.user)
+            post = PostHistory.objects.get(id=post_id, user=1)
             serializer = PostSerializer(post)
             return Response(serializer.data)
         except PostHistory.DoesNotExist:
@@ -84,7 +84,7 @@ class PostSearchAPIView(APIView):
     def put(self, request, post_id, *args, **kwargs):
         try:
             # post_id와 사용자로 게시물 필터링
-            post = PostHistory.objects.get(id=post_id, user=request.user)
+            post = PostHistory.objects.get(id=post_id, user=1)
         except PostHistory.DoesNotExist:
             return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -95,7 +95,7 @@ class PostSearchAPIView(APIView):
 
         try:
             # category_name으로 Categories 모델에서 카테고리 찾기
-            new_category = Categories.objects.get(category_name=category_name, user=request.user)
+            new_category = Categories.objects.get(category_name=category_name, user=1)
         except Categories.DoesNotExist:
             return Response({"error": f"Category '{category_name}' not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -115,7 +115,7 @@ class PostSearchCategoryAPIView(APIView):
     def get(self, request, category, *args, **kwargs):
         try:
             # category로 filtering
-            post = PostHistory.objects.get(category=category, user=request.user)
+            post = PostHistory.objects.get(category=category, user=1)
             serializer = PostSerializer(post)
             return Response(serializer.data)
         except PostHistory.DoesNotExist:
@@ -123,7 +123,7 @@ class PostSearchCategoryAPIView(APIView):
 
 class CreatePostAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        user = request.user
+        user = 1
         content = request.data.get("content")
         title = request.data.get("title")
         category_name = request.data.get("category_name")  # 카테고리 이름
@@ -152,7 +152,7 @@ class CreateCategoryAPIView(APIView):
             return Response({"error": "Category name is required"}, status=400)
 
         try:
-            user = request.user
+            user = 1
             category = Categories.objects.create(
                 user=user, category_name=category_name
             )
@@ -163,8 +163,8 @@ class CreateCategoryAPIView(APIView):
 
 class FetchCategoryAPIView(APIView):
     def get(self,request,*args,**kwargs):
-        user = request.user
-        categories = Categories.objects.filter(user=request.user)
+        user = 1
+        categories = Categories.objects.filter(user=1)
         result = CategorySerializer(categories, many=True)  # many=True 추가
         return Response(result.data)
 
