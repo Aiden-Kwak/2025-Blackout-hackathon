@@ -200,8 +200,9 @@ def generate_response_from_db(question, similar_messages):
     {context}
     위 메시지 기반으로 질문에 대한 답변을 작성하세요.
     """
+    client = OpenAI(api_key=openai_api_key) 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
