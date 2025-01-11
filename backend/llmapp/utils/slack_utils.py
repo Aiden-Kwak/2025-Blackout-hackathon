@@ -1,6 +1,7 @@
 # llmapp/utils/slack_utils.py
 import os
 import openai
+from openai import OpenAI, AuthenticationError, APIConnectionError, RateLimitError, OpenAIError
 import requests
 import numpy as np
 from llmapp.models import SlackMessage, MessageEmbedding
@@ -88,22 +89,24 @@ def generate_embedding(text):
             raise ValueError(f"Input text must be a string. Got: {type(text)}")
 
         try:
-            response = openai.Embedding.create(
-                input=text,
-                model="text-embedding-3-small",
-                api_key=openai_api_key
-            )
-            print("OpenAI API raw response: ", response)
-        except Exception as e:
-            print(f"OpenAI API call failed: {e}")
-            raise
+            client = OpenAI(api_key=openai_api_key)
+            response = client.embeddings.create(model="text-embedding-3-small", input=text)
+            
+            embedding_data = response.data
+            if not isinstance(embedding_data, list) or not embedding_data:
+                raise RuntimeError(f"Invalid API response: response.data is not a non-empty list. Actual data: {embedding_data}")
 
-        print("I AM HERE: generate_embedding response")
-        embedding = response["data"][0]["embedding"]
-        return np.array(embedding, dtype=np.float32)
+            first_item = embedding_data[0]
+            if not isinstance(first_item, openai.types.embedding.Embedding):
+                raise RuntimeError(f"Unexpected type for response.data[0]: {type(first_item)}. Expected openai.types.embedding.Embedding.")
+            if not hasattr(first_item, "embedding"):
+                raise RuntimeError(f"'embedding' attribute is missing in response.data[0]: {first_item}")
 
-    except openai.error.OpenAIError as e:
-        raise RuntimeError(f"OpenAI API 호출 중 오류가 발생했습니다: {e}")
+            embedding = np.array(first_item.embedding, dtype=np.float32)
+            return embedding
+
+        except openai.error.OpenAIError as e:
+            raise RuntimeError(f"OpenAI API 호출 중 오류가 발생했습니다: {e}")
     except Exception as e:
         raise RuntimeError(f"임베딩 생성 실패: {e}")
 
