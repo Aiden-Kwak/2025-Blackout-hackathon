@@ -22,6 +22,14 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 
+import threading
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+
+
 class FetchAndGenerateSlackResponseAPIView(APIView):
     def post(self, request, *args, **kwargs):
         print("DEBUG: FetchAndGenerateSlackResponseAPIView called")
@@ -37,13 +45,16 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
         if not channel_id or not text:
             return Response({"error": "'channel_id'와 'text'는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # 초기 응답: 요청이 접수되었음을 알림
+        self._send_message_to_slack(channel_id, f"✅ 요청이 성공적으로 접수되었습니다.\n질문: {text}")
+
         # 비동기 작업 실행
         threading.Thread(
             target=self._handle_request,
             args=(text, channel_id, top_k, test_user)
         ).start()
 
-        # 즉시 응답 반환
+        # API에 대한 응답 반환
         return Response({"message": "요청이 성공적으로 접수되었습니다."}, status=status.HTTP_200_OK)
 
     def _handle_request(self, text, channel_id, top_k, test_user):
@@ -79,19 +90,21 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             post, _ = PostHistory.objects.get_or_create(user=test_user, title=text, content=response, category=category)
             print(f"DEBUG: Post: {post}")
 
-            print("DEBUG: 작업이 성공적으로 완료되었습니다.")
+            # Slack에 완료 메시지 전송
+            self._send_message_to_slack(channel_id, f"🎉 작업이 완료되었습니다!\n질문: {text}\n답변: {response}")
         except Exception as e:
+            # 오류 메시지를 Slack으로 전송
             print(f"DEBUG: Error occurred: {e}")
-            self._send_error_to_slack(channel_id, text, str(e))
+            self._send_message_to_slack(channel_id, f"❗ 작업 중 오류가 발생했습니다.\n질문: {text}\n오류 메시지: {e}")
 
-    def _send_error_to_slack(self, channel_id, text, error_message):
+    def _send_message_to_slack(self, channel_id, message):
         slack_client = WebClient(token="your-slack-bot-token")  # Slack Bot 토큰
         try:
-            message = f"❗ *작업 중 오류 발생*\n*질문*: {text}\n*오류 메시지*: {error_message}"
             slack_client.chat_postMessage(channel=channel_id, text=message)
-            print(f"DEBUG: Error message sent to Slack: {channel_id}")
+            print(f"DEBUG: Message sent to Slack: {message}")
         except SlackApiError as slack_error:
-            print(f"DEBUG: Failed to send error to Slack: {slack_error.response['error']}")
+            print(f"DEBUG: Failed to send message to Slack: {slack_error.response['error']}")
+
 
 
 class FetchPostsAPIView(APIView):
