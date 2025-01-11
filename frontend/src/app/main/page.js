@@ -1,4 +1,4 @@
-import Main from "@/features/main/main";
+import Main from "@/features/common/main/main";
 
 export default function MainPage() {
   return (
