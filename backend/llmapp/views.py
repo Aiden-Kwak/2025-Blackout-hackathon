@@ -24,19 +24,20 @@ class FetchSlackMessagesAPIView(APIView):
             print("I AM HERE: 1") # 굿
             save_slack_messages(channel_id)
             print("I AM OUT: 1")
-            return Response({"message": f"Messages fetched for channel {channel_id}."}, status=status.HTTP_200_OK)
+            #return Response({"message": f"Messages fetched for channel {channel_id}."}, status=status.HTTP_200_OK)
+            try:
+                print("EMBEDDING START")
+                create_message_embeddings()
+                print("EMBEDDING FIN.")
+                return Response({"message": "Embeddings created successfully."}, status=status.HTTP_200_OK)
+            except Exception as e:
+                print("EMBEDDING ERR")
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             print("YOU FUCKED")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        try:
-            print("EMBEDDING START")
-            create_message_embeddings()
-            print("EMBEDDING FIN.")
-            return Response({"message": "Embeddings created successfully."}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print("EMBEDDING ERR")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
 
 """
