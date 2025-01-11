@@ -24,84 +24,23 @@ def fetch_slack_messages(channel_id, limit=100):
     
     return data.get("messages", [])
 
-"""
+
 def save_slack_messages(channel_id):
-    print("잘왔니?: ", channel_id)
     url = "https://slack.com/api/conversations.history"
     headers = {"Authorization": f"Bearer {SLACK_TOKEN}"}
     params = {"channel": channel_id, "limit": 100}
-    print("=======SAVE_MSG_FUNC======")
-    print("=============> params:", params)
     
     response = requests.get(url, headers=headers, params=params)
-    print("YOU HAVE TO GET SOME RESPONSE: ", response)
     if response.status_code != 200:
-        print("FUCKED CASE: 1")
         raise RuntimeError(f"Failed to fetch messages: {response.text}")
 
     data = response.json()
-    print("YOU HAVE TO GET SOME DATA: ", data)
     if not data.get("ok"):
-        print("FUCKED CASE: 2")
         raise RuntimeError(f"Slack API error: {data.get('error')}")
 
     messages = data.get("messages", [])
-    print("YOU HAVE TO GET SOME MESSAGES: ", messages)
 
     for msg in messages:
-        print("YOU HAVE TO GET SOME MSG LIST: ", msg)
-
-        # 데이터 검증
-        user_id = msg.get("user", "Unknown")
-        text = msg.get("text", "").strip()  # 빈 문자열 처리
-        timestamp = msg.get("ts")
-
-        if not timestamp:  # 필수 필드 확인
-            print(f"Skipping message due to missing timestamp: {msg}")
-            continue
-
-        if not text:  # 텍스트가 비어 있으면 스킵
-            print(f"Skipping message due to empty text: {msg}")
-            continue
-
-        try:
-            _, created = SlackMessage.objects.get_or_create(
-                channel_id=channel_id,
-                user_id=user_id,
-                text=text,
-                timestamp=timestamp
-            )
-            if not created:
-                print(f"Message already exists: {msg}")
-        except Exception as e:
-            print(f"Failed to save message: {msg}. Error: {e}")
-"""
-
-def save_slack_messages(channel_id):
-    print("잘왔니?: ", channel_id)
-    url = "https://slack.com/api/conversations.history"
-    headers = {"Authorization": f"Bearer {SLACK_TOKEN}"}
-    params = {"channel": channel_id, "limit": 100}
-    print("=======SAVE_MSG_FUNC======")
-    print("=============> params:", params)
-    
-    response = requests.get(url, headers=headers, params=params)
-    print("YOU HAVE TO GET SOME RESPONSE: ", response)
-    if response.status_code != 200:
-        print("FUCKED CASE: 1")
-        raise RuntimeError(f"Failed to fetch messages: {response.text}")
-
-    data = response.json()
-    print("YOU HAVE TO GET SOME DATA: ", data)
-    if not data.get("ok"):
-        print("FUCKED CASE: 2")
-        raise RuntimeError(f"Slack API error: {data.get('error')}")
-
-    messages = data.get("messages", [])
-    print("YOU HAVE TO GET SOME MESSAGES: ", messages)
-
-    for msg in messages:
-        print("YOU HAVE TO GET SOME MSG LIST: ", msg)
 
         user_id = msg.get("user", "Unknown")
         text = msg.get("text", "").strip()  # 빈 문자열 처리
@@ -119,7 +58,6 @@ def save_slack_messages(channel_id):
         # 스레드가 있으면 스레드 메시지를 가져와 본문과 결합
         full_text = text
         if thread_ts:
-            print(f"Fetching thread for message with thread_ts: {thread_ts}")
             thread_text = fetch_thread_messages(channel_id, thread_ts, headers)
             if thread_text:
                 full_text += f"\n\n--- Thread ---\n{thread_text}"
@@ -133,9 +71,6 @@ def save_slack_messages(channel_id):
                 timestamp=timestamp,
                 defaults={"thread_ts": thread_ts}  # 스레드 ID 저장
             )
-            print("!="*50)
-            print("\n")
-            print("YOU HAVE TO GET SOME CREATED: ", created)
             if not created:
                 print(f"Message already exists: {msg}")
 
@@ -144,21 +79,20 @@ def save_slack_messages(channel_id):
 
 
 def fetch_thread_messages(channel_id, thread_ts, headers):
-    print(f"Fetching thread messages for thread_ts: {thread_ts}")
 
     url = "https://slack.com/api/conversations.replies"
     params = {"channel": channel_id, "ts": thread_ts, "limit": 100}
 
     response = requests.get(url, headers=headers, params=params)
-    print("Thread response: ", response)
+    #print("Thread response: ", response)
     if response.status_code != 200:
-        print(f"Failed to fetch thread messages: {response.text}")
+        #print(f"Failed to fetch thread messages: {response.text}")
         return ""
 
     data = response.json()
-    print("Thread data: ", data)
+    #print("Thread data: ", data)
     if not data.get("ok"):
-        print(f"Slack API error in thread replies: {data.get('error')}")
+        #print(f"Slack API error in thread replies: {data.get('error')}")
         return ""
 
     thread_messages = data.get("messages", [])
@@ -180,11 +114,10 @@ def fetch_thread_messages(channel_id, thread_ts, headers):
 
 
 
-
 def generate_embedding(text):
-    print("I AM HERE: generate_embedding entered")
+    #print("I AM HERE: generate_embedding entered")
     try:
-        print("I AM HERE: generate_embedding try") # 여기까지 ㅇㅋ
+        #print("I AM HERE: generate_embedding try") # 여기까지 ㅇㅋ
         if not openai_api_key:
             print("no openai_api_key")
             raise ValueError("OpenAI API 키가 설정되지 않았습니다. 환경 변수 OPENAI_API_KEY를 확인하세요.")
@@ -216,14 +149,66 @@ def generate_embedding(text):
         raise RuntimeError(f"임베딩 생성 실패: {e}")
 
 def create_message_embeddings():
-    print("I AM HERE: embedding")
+    #print("I AM HERE: embedding")
     messages = SlackMessage.objects.filter(embedding_created=False)
-    print("YOU HAVE TO GET SOME MESSAGES: ", messages)
+    #print("YOU HAVE TO GET SOME MESSAGES: ", messages)
     for message in messages:
-        print("YOU HAVE TO GET SOME MESSAGE(single): ", message)
+        #print("YOU HAVE TO GET SOME MESSAGE(single): ", message)
         embedding = generate_embedding(message.text)
-        print("YOU HAVE TO SEE ME: generate_embedding safe")
+        #print("YOU HAVE TO SEE ME: generate_embedding safe")
         MessageEmbedding.objects.create(message=message, embedding_data=embedding.tobytes())
-        print("YOU HAVE TO SEE ME 2: object create safe")
+        #print("YOU HAVE TO SEE ME 2: object create safe")
         message.embedding_created = True
         message.save()
+
+import numpy as np
+from scipy.spatial.distance import cdist
+
+def search_similar_messages_in_db(query, top_k=5):
+    query_embedding = generate_embedding(query)
+
+    embeddings = []
+    metadata = []
+    for message_embedding in MessageEmbedding.objects.select_related('message').all():
+        embedding_array = np.frombuffer(message_embedding.embedding_data, dtype=np.float32)
+        embeddings.append(embedding_array)
+        metadata.append({
+            "text": message_embedding.message.text,
+            #"user_id": message_embedding.message.user_id,
+            "timestamp": message_embedding.message.timestamp,
+            "channel_id": message_embedding.message.channel_id
+        })
+
+    if not embeddings:
+        return []
+
+    embeddings = np.array(embeddings)
+    distances = cdist([query_embedding], embeddings, metric="cosine")[0]
+    top_indices = np.argsort(distances)[:top_k]
+
+    # 상위 유사 메시지 반환
+    results = [metadata[idx] for idx in top_indices]
+    return results
+
+def generate_response_from_db(question, similar_messages):
+    context = "\n".join(
+        [f"Message: {msg['text']}" for msg in similar_messages]
+    )
+    prompt = f"""
+    질문: {question}
+    아래는 관련된 메시지입니다:
+    {context}
+    위 메시지 기반으로 질문에 대한 답변을 작성하세요.
+    """
+    try:
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=1500,
+            temperature=0.7
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        raise RuntimeError(f"답변 생성 중 오류 발생: {e}")
+
+
