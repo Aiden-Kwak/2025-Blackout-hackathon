@@ -63,7 +63,6 @@ def save_slack_messages(channel_id):
             continue
 
         try:
-            # 중복 방지 및 저장
             _, created = SlackMessage.objects.get_or_create(
                 channel_id=channel_id,
                 user_id=user_id,
@@ -77,11 +76,15 @@ def save_slack_messages(channel_id):
 
 
 def generate_embedding(text):
+    print("I AM HERE: generate_embedding entered")
     try:
+        print("I AM HERE: generate_embedding try")
         if not openai_api_key:
+            print("no openai_api_key")
             raise ValueError("OpenAI API 키가 설정되지 않았습니다. 환경 변수 OPENAI_API_KEY를 확인하세요.")
         
         if not isinstance(text, str):
+            print("no text")
             raise ValueError(f"Input text must be a string. Got: {type(text)}")
 
         response = openai.Embedding.create(
@@ -89,7 +92,7 @@ def generate_embedding(text):
             model="text-embedding-3-small",
             api_key=openai_api_key
         )
-        
+        print("I AM HERE: generate_embedding response")
         embedding = response["data"][0]["embedding"]
         return np.array(embedding, dtype=np.float32)
 
@@ -99,9 +102,14 @@ def generate_embedding(text):
         raise RuntimeError(f"임베딩 생성 실패: {e}")
 
 def create_message_embeddings():
+    print("I AM HERE: embedding")
     messages = SlackMessage.objects.filter(embedding_created=False)
+    print("YOU HAVE TO GET SOME MESSAGES: ", messages)
     for message in messages:
+        print("YOU HAVE TO GET SOME MESSAGE(single): ", message)
         embedding = generate_embedding(message.text)
+        print("YOU HAVE TO SEE ME: generate_embedding safe")
         MessageEmbedding.objects.create(message=message, embedding_data=embedding.tobytes())
+        print("YOU HAVE TO SEE ME 2: object create safe")
         message.embedding_created = True
         message.save()
