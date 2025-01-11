@@ -13,10 +13,19 @@ from .utils.slack_utils import (
     generate_response_from_db
 )
 
+import threading
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+
+
 class FetchAndGenerateSlackResponseAPIView(APIView):
     def post(self, request, *args, **kwargs):
         print("DEBUG: FetchAndGenerateSlackResponseAPIView called")
-        test_user = User.objects.first()  #테스트
+        test_user = User.objects.first()  # 테스트 사용자
         print(f"DEBUG: Test user: {test_user}")
 
         text = request.data.get("text")  # 질문
@@ -28,6 +37,16 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
         if not channel_id or not text:
             return Response({"error": "'channel_id'와 'text'는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # 비동기 작업 실행
+        threading.Thread(
+            target=self._handle_request,
+            args=(text, channel_id, top_k, test_user)
+        ).start()
+
+        # 즉시 응답 반환
+        return Response({"message": "요청이 성공적으로 접수되었습니다."}, status=status.HTTP_200_OK)
+
+    def _handle_request(self, text, channel_id, top_k, test_user):
         try:
             # 메시지 저장
             print("DEBUG: Saving Slack messages...")
@@ -44,7 +63,7 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             print(f"DEBUG: Similar messages found: {similar_messages}")
 
             if not similar_messages:
-                return Response({"error": "유사한 메시지가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+                raise ValueError("유사한 메시지가 없습니다.")
 
             # 답변 생성
             print("DEBUG: Generating response from similar messages...")
@@ -60,14 +79,20 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             post, _ = PostHistory.objects.get_or_create(user=test_user, title=text, content=response, category=category)
             print(f"DEBUG: Post: {post}")
 
-            return Response({
-                "question": text,
-                "response": response,
-                "similar_messages": similar_messages
-            }, status=status.HTTP_200_OK)
+            print("DEBUG: 작업이 성공적으로 완료되었습니다.")
         except Exception as e:
             print(f"DEBUG: Error occurred: {e}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            self._send_error_to_slack(channel_id, text, str(e))
+
+    def _send_error_to_slack(self, channel_id, text, error_message):
+        slack_client = WebClient(token="your-slack-bot-token")  # Slack Bot 토큰
+        try:
+            message = f"❗ *작업 중 오류 발생*\n*질문*: {text}\n*오류 메시지*: {error_message}"
+            slack_client.chat_postMessage(channel=channel_id, text=message)
+            print(f"DEBUG: Error message sent to Slack: {channel_id}")
+        except SlackApiError as slack_error:
+            print(f"DEBUG: Failed to send error to Slack: {slack_error.response['error']}")
+
 
 class FetchPostsAPIView(APIView):
     def get(self, request, *args, **kwargs):
