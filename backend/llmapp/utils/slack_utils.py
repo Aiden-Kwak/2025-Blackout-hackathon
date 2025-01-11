@@ -41,7 +41,8 @@ def save_slack_messages(channel_id):
     if not data.get("ok"):
         print("FUCKED CASE: 2") # 여기 들어옴
         raise RuntimeError(f"Slack API error: {data.get('error')}")
-
+    print("\n")
+    print("="*50)
     messages = data.get("messages", [])
     print("YOU HAVE TO GET SOME MESSAGES: ", messages)
     for msg in messages:
