@@ -43,10 +43,17 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             # 이거답변
             response = generate_response_from_db(text, similar_messages)
             print("="*50)
-            print(response)
+            print(response) # 됐어
+            print("WE FUCKED\n"*10)
+            print(request.user)
+            print("="*50)
             category, created = Categories.objects.get_or_create(user=request.user, category_name="미정")
             post, created2 = PostHistory.objects.get_or_create(user=request.user,title=text,
                                                                content=response,category=category)
+            print("YOU HAVE TO SEE ME: ", post)
+            print(created)
+            print("="*50)
+            print(created2)
             return Response({
                 "question": text,
                 "response": response,
