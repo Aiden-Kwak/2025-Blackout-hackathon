@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY=os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.getenv("DEBUG") == 'True' else False
 
 ALLOWED_HOSTS = ['*']
 
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
 
     #### myapps ####
     'myaccountapp',
-    'llmapp'
+    #'llmapp'
 ]
 
 MIDDLEWARE = [
@@ -160,9 +160,11 @@ GOOGLE_OAUTH2_PROJECT_ID= os.getenv("DJANGO_GOOGLE_OAUTH2_PROJECT_ID")
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://aiden-kwak.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "http://aiden-kwak.com",
 ]
 
 SESSION_COOKIE_SAMESITE = "Lax"
