@@ -1,6 +1,14 @@
-import URLManagement from '@/utils/URLManagement';
+const getBaseURL = () => {
+  const baseURLs = {
+    development: `http://localhost:8000`, // 개발 환경
+    production: `http://54.152.161.95:3000`, // 프로덕션 환경
+  };
 
-const url = URLManagement();
+  // NODE_ENV 값에 따라 URL 반환, 기본값은 개발 환경
+  return baseURLs[process.env.NODE_ENV] || baseURLs.development;
+};
+
+const url = getBaseURL();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -9,7 +17,7 @@ const nextConfig = {
       return [
         {
           source: "/api/:path*/",
-          destination: `${url}/api/:path*/`,
+          destination: `${getBaseURL}/api/:path*/`,
         },
         {
           source: "/media/:path*/",
