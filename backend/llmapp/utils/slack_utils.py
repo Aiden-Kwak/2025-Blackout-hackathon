@@ -29,7 +29,7 @@ def save_slack_messages(channel_id):
     headers = {"Authorization": f"Bearer {SLACK_TOKEN}"}
     params = {"channel": channel_id, "limit": 100}
     print("=======SAVE_MSG_FUNC======") # 굿
-
+    print("=============> params:" , params)
     response = requests.get(url, headers=headers, params=params)
     print("YOU HAVE TO GET SOME RESPONSE: ", response) # 200 
     if response.status_code != 200:
@@ -37,7 +37,7 @@ def save_slack_messages(channel_id):
         raise RuntimeError(f"Failed to fetch messages: {response.text}")
 
     data = response.json()
-    print("YOU HAVE TO GET SOME DATA: ", data) # {'ok'}
+    print("YOU HAVE TO GET SOME DATA: ", data) #{'ok': False, 'error': 'channel_not_found'}
     if not data.get("ok"):
         print("FUCKED CASE: 2") # 여기 들어옴
         raise RuntimeError(f"Slack API error: {data.get('error')}")
