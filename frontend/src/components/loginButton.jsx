@@ -4,7 +4,7 @@ import { useState } from "react";
 import AuthStatus from "@/utils/authStatus";
 import Image from "next/image";
 import styles from "@/app/page.module.css";
-import { URLManagement } from "@/utils/URLManagement";
+import URLManagement from "@/utils/URLManagement";
 
 function LoginButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
