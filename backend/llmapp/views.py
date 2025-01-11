@@ -15,10 +15,12 @@ from .utils.slack_utils import (
     search_similar_messages_in_db, 
     generate_response_from_db
 )
+from django.contrib.auth.models import User # 테스트용
 
 
 class FetchAndGenerateSlackResponseAPIView(APIView):
     def post(self, request, *args, **kwargs):
+        test_user = User.objects.first() # 테스트유저
         text = request.data.get("text")  # 질문
         channel_id = request.data.get("channel_id")
         top_k = int(request.data.get("top_k", 5))
@@ -47,8 +49,8 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             print("WE FUCKED\n"*10)
             print(request.user) # AnonymousUser
             print("="*50)
-            category, created = Categories.objects.get_or_create(user=1, category_name="미정")
-            post, created2 = PostHistory.objects.get_or_create(user=1,title=text,
+            category, created = Categories.objects.get_or_create(user=test_user, category_name="미정")
+            post, created2 = PostHistory.objects.get_or_create(user=test_user,title=text,
                                                                content=response,category=category)
             print("YOU HAVE TO SEE ME: ", post)
             print(created)
@@ -65,7 +67,8 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
 
 class FetchPostsAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        posts = PostHistory.objects.filter(user=1)
+        test_user = User.objects.first() # 테스트유저
+        posts = PostHistory.objects.filter(user=test_user)
         result = PostSerializer(posts, many=True)  # many=True 추가
         return Response(result.data)
 
@@ -74,17 +77,19 @@ class PostSearchAPIView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
 
     def get(self, request, post_id, *args, **kwargs):
+        test_user = User.objects.first() # 테스트유저
         try:
             # post_id로 필터링
-            post = PostHistory.objects.get(id=post_id, user=1)
+            post = PostHistory.objects.get(id=post_id, user=test_user)
             serializer = PostSerializer(post)
             return Response(serializer.data)
         except PostHistory.DoesNotExist:
             return Response({"error": "Post not found"}, status=404)
     def put(self, request, post_id, *args, **kwargs):
+        test_user = User.objects.first() # 테스트유저
         try:
             # post_id와 사용자로 게시물 필터링
-            post = PostHistory.objects.get(id=post_id, user=1)
+            post = PostHistory.objects.get(id=post_id, user=test_user)
         except PostHistory.DoesNotExist:
             return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -95,7 +100,7 @@ class PostSearchAPIView(APIView):
 
         try:
             # category_name으로 Categories 모델에서 카테고리 찾기
-            new_category = Categories.objects.get(category_name=category_name, user=1)
+            new_category = Categories.objects.get(category_name=category_name, user=test_user)
         except Categories.DoesNotExist:
             return Response({"error": f"Category '{category_name}' not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -113,9 +118,10 @@ class PostSearchAPIView(APIView):
 class PostSearchCategoryAPIView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
     def get(self, request, category, *args, **kwargs):
+        test_user = User.objects.first() # 테스트유저
         try:
             # category로 filtering
-            post = PostHistory.objects.get(category=category, user=1)
+            post = PostHistory.objects.get(category=category, user=test_user)
             serializer = PostSerializer(post)
             return Response(serializer.data)
         except PostHistory.DoesNotExist:
@@ -123,7 +129,7 @@ class PostSearchCategoryAPIView(APIView):
 
 class CreatePostAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        user = 1
+        user = User.objects.first() # 테스트유저
         content = request.data.get("content")
         title = request.data.get("title")
         category_name = request.data.get("category_name")  # 카테고리 이름
@@ -147,12 +153,13 @@ class CreatePostAPIView(APIView):
 
 class CreateCategoryAPIView(APIView):
     def post(self, request, *args, **kwargs):
+        test_user = User.objects.first() # 테스트유저
         category_name = request.data.get("category_name")  # JSON body에서 카테고리 이름 가져오기
         if not category_name:
             return Response({"error": "Category name is required"}, status=400)
 
         try:
-            user = 1
+            user = test_user
             category = Categories.objects.create(
                 user=user, category_name=category_name
             )
@@ -163,8 +170,9 @@ class CreateCategoryAPIView(APIView):
 
 class FetchCategoryAPIView(APIView):
     def get(self,request,*args,**kwargs):
-        user = 1
-        categories = Categories.objects.filter(user=1)
+        test_user = User.objects.first() # 테스트유저
+        user = test_user
+        categories = Categories.objects.filter(user=user)
         result = CategorySerializer(categories, many=True)  # many=True 추가
         return Response(result.data)
 
