@@ -24,11 +24,20 @@ def fetch_slack_messages(channel_id, limit=100):
     return data.get("messages", [])
 
 def save_slack_messages(channel_id):
-    messages = fetch_slack_messages(channel_id)
+    url = "https://slack.com/api/conversations.history"
+    headers = {"Authorization": f"Bearer {SLACK_TOKEN}"}
+    params = {"channel": channel_id, "limit": 100}
+
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code != 200:
+        raise RuntimeError(f"Failed to fetch messages: {response.text}")
+
+    data = response.json()
+    if not data.get("ok"):
+        raise RuntimeError(f"Slack API error: {data.get('error')}")
+
+    messages = data.get("messages", [])
     for msg in messages:
-        print("="*50)
-        print(msg)
-        print("="*50)
         SlackMessage.objects.get_or_create(
             channel_id=channel_id,
             user_id=msg.get("user", "Unknown"),
