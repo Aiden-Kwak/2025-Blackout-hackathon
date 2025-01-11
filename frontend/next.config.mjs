@@ -19,7 +19,7 @@ const nextConfig = {
       return [
         {
           source: "/api/:path*/",
-          destination: `${getBaseURL}/api/:path*/`,
+          destination: `${url}/api/:path*/`,
         },
         {
           source: "/media/:path*/",
