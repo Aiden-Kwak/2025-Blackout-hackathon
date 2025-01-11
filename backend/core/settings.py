@@ -54,7 +54,7 @@ INSTALLED_APPS = [
 
     #### myapps ####
     'myaccountapp',
-    #'llmapp'
+    'llmapp'
 ]
 
 MIDDLEWARE = [
@@ -69,11 +69,23 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
+"""
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',  # JSON 렌더러만 활성화
     ),
 }
+"""
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # 모든 요청 허용
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
 
 
 ROOT_URLCONF = "core.urls"
