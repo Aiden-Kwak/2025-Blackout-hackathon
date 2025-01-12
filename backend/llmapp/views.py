@@ -113,10 +113,10 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
     def _send_image_to_slack(self, channel_id, image_str, title_str):
         slack_client = WebClient(token=os.getenv("SLACK_BOT_TOKEN"))  # Slack Bot 토큰
         try:
-            slack_client.files_upload(
+            slack_client.files_getUploadURLExternal(
                 channels=channel_id,
-                file="output.png",
-                title=title_str,
+                filename=image_str,
+                length = os.path.getsize(image_str),
                 )
             print(f"DEBUG: Message sent to Slack: {image_str}")
         except SlackApiError as slack_error:
