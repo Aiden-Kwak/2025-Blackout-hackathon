@@ -16,3 +16,4 @@ venv
 *.pyo
 *.log
 *.pem
+*.sqlite3
