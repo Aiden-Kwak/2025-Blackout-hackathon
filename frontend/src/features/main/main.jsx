@@ -8,6 +8,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
+import DOMPurify from "dompurify";
+
 
 import "./main.css";
 
@@ -22,6 +24,10 @@ function Main() {
   useEffect(() => {
     fetchHistory();
   }, []);
+
+  const sanitizeHtmlContent = (htmlContent) => {
+    return DOMPurify.sanitize(htmlContent);
+  };
   const fetchHistory = async () => {
     try {
       // 두 API를 병렬로 호출
@@ -145,13 +151,11 @@ function Main() {
         <div className="post-container">
           <h1>{selectedPost.title}</h1>
           <h3>카테고리: {selectedPost.category_name}</h3>
-          <ReactMarkdown
-                remarkPlugins={remarkGfm} 
-                rehypePlugins={[rehypeRaw]} 
-                className={styles.messageText}
-          >
-            {selectedPost.content}
-          </ReactMarkdown>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: sanitizeHtmlContent(selectedPost.content),
+            }}
+          />
           <button
             onClick={() => setSelectedPost(null)}
             className="back-button"
@@ -179,12 +183,11 @@ function Main() {
                 className="post-preview"
               >
                 <h3>{post.title}</h3>
-                <ReactMarkdown
-                remarkPlugins={remarkGfm} 
-                rehypePlugins={[rehypeRaw]}
-                >
-                  {post.content.substring(0, 100)}...
-                </ReactMarkdown>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizeHtmlContent(`${post.content.substring(0, 100)}$`),
+                  }}
+                />
               </div>
             ))
           ) : (
