@@ -1,0 +1,24 @@
+
+.lock-icon {
+    font-size: 24px; 
+    color: white;
+    background: none!important;
+    border: none;
+    padding-top: 5px;
+    margin-left: auto;
+    margin-right: 1rem;
+}
+a {
+    background: none!important;
+}
+
+.small-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.small-nav > .categoryname {
+    font-size: 1.5em;
+    margin: 0 10px;
+}

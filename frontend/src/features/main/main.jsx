@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from "react";
 import apiClient from "@/utils/axios";
 import Writing from "@/features/main/writing";
+import LoginButton from "@/components/loginButton";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 
 import "./main.css";
 
@@ -96,7 +99,12 @@ function Main() {
   return (
     <div className="main-container">
       <div className="category-container">
-        <h2>Categories</h2>
+        <div className="small-nav">
+          <p className="categoryname">카테고리</p>
+          <LoginButton/>
+        </div>
+        
+        
         {categories && categories.length > 0 ? (
           <ul className="category-list">
             {categories.map((category) => (
@@ -110,7 +118,7 @@ function Main() {
             ))}
           </ul>
         ) : (
-          <p>No categories available.</p>
+          <p>서버 연결을 확인하세요.</p>
         )}
         <form onSubmit={handleAddCategory} className="category-form">
           <input
@@ -148,10 +156,13 @@ function Main() {
         </div>
       ) : (
         <div className="post-list">
-          <h1>Blog Posts</h1>
-          <button onClick={handleWritingClick} className="create-post-button">
-            포스트 생성
-          </button>
+          <div className="small-nav"> 
+            <h1>나의 Slack 기록</h1>
+            <button onClick={handleWritingClick} className="create-post-button">
+              <p>+</p>
+            </button>
+          </div>
+          
           {filteredPosts && filteredPosts.length > 0 ? (
             filteredPosts.map((post) => (
               <div

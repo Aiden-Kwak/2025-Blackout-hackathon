@@ -5,6 +5,9 @@ import AuthStatus from "@/utils/authStatus";
 import Image from "next/image";
 import styles from "@/app/page.module.css";
 import URLManagement from "@/utils/URLManagement";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import "./loginButton.css";
 
 function LoginButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,20 +23,18 @@ function LoginButton() {
         className={styles.primary}
         href={
           isLoggedIn
-            ? "/llm" // 로그인 상태일 때
-            : `${url}/api/accountapp/auth/login/?next=${url}/llm` // 비로그인 상태일 때
+            ? "/main" // 로그인 상태일 때
+            : `${url}/api/accountapp/auth/login/?next=${url}/main` // 비로그인 상태일 때
         }
         target={isLoggedIn ? "_self" : "_blank"}
         rel="noopener noreferrer"
       >
-        <Image
-          className={styles.logo}
-          src={process.env.NODE_ENV === 'development' ? 'vercel.svg' : 'shit'}
-          alt="Vercel logomark"
-          width={20}
-          height={20}
+        <FontAwesomeIcon 
+            icon={isLoggedIn ? faLockOpen : faLock} 
+            size="1x"
+            color={isLoggedIn ? "white" : "white"}
+            className={`lock-icon ${isLoggedIn ? "unlocked" : "locked"}`} 
         />
-        {isLoggedIn ? "Start Chat" : "Google Login"}
       </a>
     </>
   );

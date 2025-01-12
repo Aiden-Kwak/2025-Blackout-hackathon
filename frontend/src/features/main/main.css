@@ -46,20 +46,21 @@ input[type="text"] {
 button {
   padding: 10px 15px;
   margin: 10px 0;
-  background-color: #4caf50;
+  background-color: #611f69;
   color: #ffffff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: color 2s ease;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #8e478e;
 }
 
 .category-container {
   margin: 20px;
-  padding: 10px;
+  padding: 20px;
   background-color: #2a2a2a;
   border-radius: 10px;
 }
@@ -87,4 +88,22 @@ button:hover {
   margin: 5px 0 0 0;
   font-size: 0.9em;
   color: #aaaaaa;
+}
+
+.category-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.category-input {
+  width: 100%;
+}
+
+.category-container p {
+  margin-left: .5rem;
+}
+
+.post-list {
+  padding: 2rem;
 }
