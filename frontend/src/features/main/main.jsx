@@ -108,7 +108,7 @@ function Main() {
   };
   const handleOnSuccess = (post) => {
     setIsWriting(false);
-    fetchHistory
+    fetchHistory();
   }
   return (
     <div className="main-container">
