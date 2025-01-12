@@ -127,7 +127,7 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
                     "title": title_str
                 }]
             )
-            print(f"DEBUG: File upload completed: {complete_response}")
+            print(f"DEBUG: File upload completed")
 
             print(f"DEBUG: Message sent to Slack: {image_str}")
         except SlackApiError as slack_error:
