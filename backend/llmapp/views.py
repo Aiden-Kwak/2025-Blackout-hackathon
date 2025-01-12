@@ -29,6 +29,7 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
         print(f"DEBUG: Test user: {test_user}")
 
         text = request.data.get("text")  # 질문
+        user_name = request.data.get("user_name")
         channel_id = request.data.get("channel_id")
         top_k = int(request.data.get("top_k", 5))
 
@@ -40,14 +41,17 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
         # 비동기 작업 실행
         threading.Thread(
             target=self._handle_request,
-            args=(text, channel_id, top_k, test_user)
+            args=(text, channel_id, top_k, test_user, user_name)
         ).start()
 
         # API에 대한 응답 반환
-        return Response(f"✅ 요청이 성공적으로 접수되었습니다.\n질문: {text}", status=status.HTTP_200_OK)
+        return Response(f"요청을 검토하고 있어요...", status=status.HTTP_200_OK)
 
-    def _handle_request(self, text, channel_id, top_k, test_user):
+    def _handle_request(self, text, channel_id, top_k, test_user, user_name):
+        
         try:
+            self._send_message_to_slack(channel_id, f"✅ {user_name}님의 요청이 성공적으로 접수되었습니다.")
+            self._send_message_to_slack(channel_id, f"✅ 질문내용: {text}")
             # 메시지 저장
             print("DEBUG: Saving Slack messages...")
             save_slack_messages(channel_id)
@@ -80,11 +84,15 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             print(f"DEBUG: Post: {post}")
 
             # Slack에 완료 메시지 전송
-            self._send_message_to_slack(channel_id, f"🎉 작업이 완료되었습니다!\n질문: {text}\n답변: {response}")
+            self._send_message_to_slack(channel_id, f"🎉 {user_name}님의 작업이 완료되었습니다!")
+            self._send_message_to_slack(channel_id, f"🎉 질문내용: {text}")
+            self._send_message_to_slack(channel_id, f"🎉 답변: {response}")
         except Exception as e:
             # 오류 메시지를 Slack으로 전송
             print(f"DEBUG: Error occurred: {e}")
-            self._send_message_to_slack(channel_id, f"❗ 작업 중 오류가 발생했습니다.\n질문: {text}\n오류 메시지: {e}")
+            self._send_message_to_slack(channel_id, f"❗ {user_name}님의 작업 중 오류가 발생했습니다...")
+            self._send_message_to_slack(channel_id, f"❗ 질문내용: {text}")
+            self._send_message_to_slack(channel_id, f"❗ 오류 메시지: {e}")
 
     def _send_message_to_slack(self, channel_id, message):
         slack_client = WebClient(token=os.getenv("SLACK_BOT_TOKEN"))  # Slack Bot 토큰
