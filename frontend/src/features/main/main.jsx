@@ -6,6 +6,7 @@ import Writing from "@/features/main/writing";
 import LoginButton from "@/components/loginButton";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 
 import "./main.css";
