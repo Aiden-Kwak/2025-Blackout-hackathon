@@ -113,7 +113,7 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
     def _send_image_to_slack(self, channel_id, image_str, title_str):
         slack_client = WebClient(token=os.getenv("SLACK_BOT_TOKEN"))  # Slack Bot 토큰
         try:
-            slack_client.files.getUploadURLExternal(
+            slack_client.files_getUploadURLExternal(
                 channels=channel_id,
                 filename=image_str,
                 length = os.path.getsize(image_str),
