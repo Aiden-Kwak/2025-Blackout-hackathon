@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router';
 import apiClient from "@/utils/axios";
 import Writing from "@/features/main/writing";
 import LoginButton from "@/components/loginButton";
@@ -21,15 +20,10 @@ function Main() {
   const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리
   const [isWriting, setIsWriting] = useState(false); // 글쓰기 상태
   const [selectedPost, setSelectedPost] = useState(null); // 선택된 포스트
-  const router = useRouter();
 
   useEffect(() => {
     fetchHistory();
   }, []);
-
-  const handleNavigation = () => {
-    router.push('/main');
-  };
 
   const sanitizeHtmlContent = (htmlContent) => {
     return DOMPurify.sanitize(htmlContent);
@@ -108,13 +102,13 @@ function Main() {
   };
   const handleOnSuccess = (post) => {
     setIsWriting(false);
-    fetchHistory();
+    fetchHistory
   }
   return (
     <div className="main-container">
       <div className="category-container">
         <div className="small-nav">
-          <p className="categoryname" onClick={handleNavigation}>카테고리</p>
+          <p className="categoryname">카테고리</p>
           <LoginButton/>
         </div>
         
