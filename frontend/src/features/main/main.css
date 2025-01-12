@@ -78,6 +78,7 @@ button:hover {
   border-bottom: 1px solid #444444;
 }
 
+
 .post-preview h3 {
   margin: 0;
   font-size: 1.2em;
@@ -106,4 +107,9 @@ button:hover {
 
 .post-list {
   padding: 2rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
 }

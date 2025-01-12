@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/router';
 import apiClient from "@/utils/axios";
 import Writing from "@/features/main/writing";
 import LoginButton from "@/components/loginButton";
@@ -20,10 +21,15 @@ function Main() {
   const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리
   const [isWriting, setIsWriting] = useState(false); // 글쓰기 상태
   const [selectedPost, setSelectedPost] = useState(null); // 선택된 포스트
+  const router = useRouter();
 
   useEffect(() => {
     fetchHistory();
   }, []);
+
+  const handleNavigation = () => {
+    router.push('/main');
+  };
 
   const sanitizeHtmlContent = (htmlContent) => {
     return DOMPurify.sanitize(htmlContent);
@@ -108,7 +114,7 @@ function Main() {
     <div className="main-container">
       <div className="category-container">
         <div className="small-nav">
-          <p className="categoryname">카테고리</p>
+          <p className="categoryname" onClick={handleNavigation}>카테고리</p>
           <LoginButton/>
         </div>
         
@@ -149,22 +155,23 @@ function Main() {
         />
       ) : selectedPost ? (
         <div className="post-container">
-          <h1>{selectedPost.title}</h1>
           <h3>카테고리: {selectedPost.category_name}</h3>
           <div
             dangerouslySetInnerHTML={{
               __html: sanitizeHtmlContent(selectedPost.content),
             }}
           />
-          <button
-            onClick={() => setSelectedPost(null)}
-            className="back-button"
-          >
-            뒤로 가기
-          </button>
-          <button onClick={handleRefiningClick} className="edit-button">
-            수정
-          </button>
+          <div className="button-container"> 
+            <button
+              onClick={() => setSelectedPost(null)}
+              className="back-button"
+            >
+              뒤로 가기
+            </button>
+            <button onClick={handleRefiningClick} className="edit-button">
+              수정
+            </button>
+          </div>
         </div>
       ) : (
         <div className="post-list">
