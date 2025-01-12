@@ -182,7 +182,7 @@ function Main() {
                 onClick={() => handlePostClick(post)}
                 className="post-preview"
               >
-                <h3>{post.title}</h3>
+                <h4>{post.category_name}</h4>
                 <div
                   dangerouslySetInnerHTML={{
                     __html: sanitizeHtmlContent(`${post.content.substring(0, 100)}$`),
