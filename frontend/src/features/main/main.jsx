@@ -4,8 +4,9 @@ import React, { useState, useEffect } from "react";
 import apiClient from "@/utils/axios";
 import Writing from "@/features/main/writing";
 import LoginButton from "@/components/loginButton";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 
 import "./main.css";
 
@@ -143,7 +144,13 @@ function Main() {
         <div className="post-container">
           <h1>{selectedPost.title}</h1>
           <h3>카테고리: {selectedPost.category_name}</h3>
-          <p>{selectedPost.content}</p>
+          <ReactMarkdown
+                remarkPlugins={remarkGfm} 
+                rehypePlugins={[rehypeRaw]} 
+                className={styles.messageText}
+          >
+            {selectedPost.content}
+          </ReactMarkdown>
           <button
             onClick={() => setSelectedPost(null)}
             className="back-button"
@@ -171,7 +178,12 @@ function Main() {
                 className="post-preview"
               >
                 <h3>{post.title}</h3>
-                <p>{post.content.substring(0, 100)}...</p>
+                <ReactMarkdown
+                remarkPlugins={remarkGfm} 
+                rehypePlugins={[rehypeRaw]}
+                >
+                  {post.content.substring(0, 100)}...
+                </ReactMarkdown>
               </div>
             ))
           ) : (
