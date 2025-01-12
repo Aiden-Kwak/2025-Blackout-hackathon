@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from django.contrib.auth.models import User
 
+from imgkit import from_string
+
 from .serializers import PostSerializer, CategorySerializer
 from .models import PostHistory, Categories
 from .utils.slack_utils import (
@@ -19,6 +21,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 import threading
+
 import os
 
 
@@ -83,10 +86,15 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
             post, _ = PostHistory.objects.get_or_create(user=test_user, title=text, content=response, category=category)
             print(f"DEBUG: Post: {post}")
 
+            # 생성된 답변을 이미지로 변환
+            from_string(response, 'output.png')
+
             # Slack에 완료 메시지 전송
             self._send_message_to_slack(channel_id, f"🎉 {user_name}님의 작업이 완료되었습니다!")
             self._send_message_to_slack(channel_id, f"🎉 질문내용: {text}")
-            self._send_message_to_slack(channel_id, f"🎉 답변: {response}")
+            self._send_image_to_slack(channel_id, 'output.png', '🎉 답변')
+            self._send_message_to_slack(channel_id, f"🎉 답변노트가 https://aiden-kwak.com/main/ 에 저장되었어요 😄")
+            
         except Exception as e:
             # 오류 메시지를 Slack으로 전송
             print(f"DEBUG: Error occurred: {e}")
@@ -99,6 +107,18 @@ class FetchAndGenerateSlackResponseAPIView(APIView):
         try:
             slack_client.chat_postMessage(channel=channel_id, text=message)
             print(f"DEBUG: Message sent to Slack: {message}")
+        except SlackApiError as slack_error:
+            print(f"DEBUG: Failed to send message to Slack: {slack_error.response['error']}")
+            
+    def _send_image_to_slack(self, channel_id, image_str, title_str):
+        slack_client = WebClient(token=os.getenv("SLACK_BOT_TOKEN"))  # Slack Bot 토큰
+        try:
+            slack_client.files_upload(
+                channels=channel_id,
+                file="output.png",
+                title=title_str,
+                )
+            print(f"DEBUG: Message sent to Slack: {image_str}")
         except SlackApiError as slack_error:
             print(f"DEBUG: Failed to send message to Slack: {slack_error.response['error']}")
 
