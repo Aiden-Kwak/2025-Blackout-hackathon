@@ -1,9 +1,17 @@
 # Slack RAG 기반 정보 검색 및 블로그 생성 서비스
 
 ## blackout-hackathon
-본 서비스는 2025년 1월 11일부터 2025년 1월 12일 까지 진행된 서,연,고,카,포,지 연합해커톤 기간동안 개발되었습니다. 
-<img src="/img/해커톤표지.png"  width="700" height="370">
+본 서비스는 2025년 1월 11일부터 2025년 1월 12일 까지 진행된 서,연,고,카,포,지 연합해커톤 기간동안 개발되었습니다.
+<p align="center">
+	<img src="img/해커톤표지.png" width="300"/>
+</p>
 
+## 기술스택
+- Django REST Framework
+- Next.js
+- OPENAI API (gpt-3.5-turbo, text-embedding-3-small)
+- Slack
+- EC2, Nginx
 
 ## 소개
 이 서비스는 Slack 채널의 대화 데이터를 활용하여 질문에 대한 과거 대화를 검색하고, 이를 기반으로 적합한 답변을 생성합니다. 또한 생성된 답변은 블로그 형태로 자동 문서화하여 손쉽게 관리할 수 있도록 돕습니다. 반복되는 질문에 대한 부담을 줄이고, Slack의 정보를 체계적으로 정리할 수 있는 새로운 도구를 제공합니다.
@@ -49,3 +57,47 @@
 
 ## 시연
 <img src="img/demo.png" width="700" height="370">
+
+<p align="center">
+	<img src="img/demo.png" width="700"/>
+</p>
+
+## 팀원 및 역할
+
+<table style="width:100%">
+  <thead>
+    <tr>
+      <th style="text-align:center;">성명</th>
+      <th style="text-align:center;">담당</th>
+      <th style="text-align:center;">깃허브</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align:center;">곽병혁 (leader)</td>
+      <td style="text-align:center;">
+      LLM RAG 구현 및 슬랙봇 개발<br/>
+      서비스 기획 및 디자인(frontend)<br/>
+      </td>
+      <td style="text-align:center;"><a href="https://github.com/Aiden-Kwak"><img src="http://img.shields.io/badge/Aiden--Kwak-655ced?style=social&logo=github"/></a></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">김재윤</td>
+      <td style="text-align:center;">
+        블로그 기능 서버 및 프론트엔드 개발<br/>
+        발표자료 디자인
+      </td>
+      <td style="text-align:center;"><a href="https://github.com/1MTW"><img src="http://img.shields.io/badge/1MTW-655ced?style=social&logo=github"/></a></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;">고대희</td>
+      <td style="text-align:center;">
+        인프라(EC2, Nginx)<br/>
+        슬랙봇 개발<br/>
+        최종 발표
+      </td>
+      <td style="text-align:center;"><a href="https://github.com/
+DaehuiG"><img src="http://img.shields.io/badge/DaehuiG-655ced?style=social&logo=github"/></a></td>
+    </tr>
+  </tbody>
+</table>
