@@ -48,4 +48,4 @@
    ```
 
 ## 시연
-<img src="/img/demo.png" width="700" height="370">
+<img src="img/demo.png" width="700" height="370">
