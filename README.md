@@ -76,7 +76,7 @@
 
 | 성명              | 담당                                                       | 깃허브                                                                 |
 | ----------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------- |
-| 곽병혁 (leader)   | LLM RAG 구현 및 슬랙봇 개발<br/>서비스 기획 및 디자인 (frontend) | [![Aiden-Kwak](http://img.shields.io/badge/Aiden--Kwak-655ced?style=social&logo=github)](https://github.com/Aiden-Kwak) |
+| 곽병혁 (leader)   | LLM RAG 구현 및 슬랙봇 개발<br/>서비스 기획 및 디자인 (FE/BE) | [![Aiden-Kwak](http://img.shields.io/badge/Aiden--Kwak-655ced?style=social&logo=github)](https://github.com/Aiden-Kwak) |
 | 김재윤            | 블로그 기능 서버 및 프론트엔드 개발<br/>발표자료 디자인          | [![1MTW](http://img.shields.io/badge/1MTW-655ced?style=social&logo=github)](https://github.com/1MTW)            |
 | 고대희            | 인프라 (EC2, Nginx)<br/>슬랙봇 개발<br/>최종 발표               | [![DaehuiG](http://img.shields.io/badge/DaehuiG-655ced?style=social&logo=github)](https://github.com/DaehuiG)      |
 
@@ -151,7 +151,7 @@ It reduces the burden of repetitive queries and offers a new tool for systematic
 
 | Name              | Role                                                       | GitHub                                                                 |
 | ----------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Aiden-Kwak (leader)   | LLM RAG implementation and Slack bot development<br/>Service planning and design (frontend) | [![Aiden-Kwak](http://img.shields.io/badge/Aiden--Kwak-655ced?style=social&logo=github)](https://github.com/Aiden-Kwak) |
+| Aiden-Kwak (leader)   | LLM RAG implementation and Slack bot development<br/>Service planning and design (FE/BE) | [![Aiden-Kwak](http://img.shields.io/badge/Aiden--Kwak-655ced?style=social&logo=github)](https://github.com/Aiden-Kwak) |
 | 김재윤            | Blog functionality server and frontend development<br/>Presentation design          | [![1MTW](http://img.shields.io/badge/1MTW-655ced?style=social&logo=github)](https://github.com/1MTW)            |
 | 고대희            | Infrastructure (EC2, Nginx)<br/>Slack bot development<br/>Final presentation               | [![DaehuiG](http://img.shields.io/badge/DaehuiG-655ced?style=social&logo=github)](https://github.com/DaehuiG)      |
 
